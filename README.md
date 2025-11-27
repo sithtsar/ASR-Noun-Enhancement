@@ -71,7 +71,7 @@ python src/evaluation/plots.py    # Generate plots
 
 For an interactive experience, use the comprehensive notebook:
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/your-username/ASR_Noun_Enhancement/blob/main/notebooks/notebook.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/sithtsar/ASR-Noun-Enhancement/blob/main/notebooks/notebook.ipynb)
 
 The notebook includes:
 - Step-by-step implementation
