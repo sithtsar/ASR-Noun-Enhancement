@@ -41,14 +41,15 @@ def plot_error_distribution(df):
 def plot_vocab_stats():
     with open('data/processed/stats.json', 'r') as f:
         stats = json.load(f)
-    
+
     labels = ['Correct Vocab', 'Incorrect Vocab', 'Medical Correct', 'Medical Incorrect']
     sizes = [stats['vocab_size_correct'], stats['vocab_size_incorrect'], stats['medical_terms_correct'], stats['medical_terms_incorrect']]
-    
-    plt.figure(figsize=(8, 8))
-    plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=140)
-    plt.title('Vocabulary Coverage Statistics')
-    plt.savefig('plots/vocab_stats.png')
+
+    plt.figure(figsize=(10, 8))
+    plt.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=140, explode=(0.05, 0.05, 0.05, 0.05))
+    plt.title('Vocabulary Coverage Statistics', fontsize=14, fontweight='bold')
+    plt.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle
+    plt.savefig('plots/vocab_stats.png', dpi=300, bbox_inches='tight')
     plt.close()
 
 def plot_baseline_results():

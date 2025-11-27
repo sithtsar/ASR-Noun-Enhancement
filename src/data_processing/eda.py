@@ -61,9 +61,9 @@ def compute_stats(df):
     # Load models
     nlp = load_spacy_model()
 
-    # Extract nouns
-    df['nouns_correct_ner'] = df['correct sentences'].apply(lambda x: extract_nouns_ner(x, nlp))
-    df['nouns_incorrect_ner'] = df['ASR-generated incorrect transcriptions'].apply(lambda x: extract_nouns_ner(x, nlp))
+    # Extract nouns (skip NER for speed, focus on POS)
+    # df['nouns_correct_ner'] = df['correct sentences'].apply(lambda x: extract_nouns_ner(x, nlp))
+    # df['nouns_incorrect_ner'] = df['ASR-generated incorrect transcriptions'].apply(lambda x: extract_nouns_ner(x, nlp))
     df['nouns_correct_pos'] = df['correct sentences'].apply(extract_nouns_pos)
     df['nouns_incorrect_pos'] = df['ASR-generated incorrect transcriptions'].apply(extract_nouns_pos)
 
@@ -74,9 +74,23 @@ def compute_stats(df):
     vocab_correct = set(correct_words)
     vocab_incorrect = set(incorrect_words)
 
-    # Medical terms: capitalized words (simple proxy)
-    medical_correct = [w for w in correct_words if w[0].isupper()]
-    medical_incorrect = [w for w in incorrect_words if w[0].isupper()]
+    # Medical terms: likely medication names and medical abbreviations
+    # Look for words that are all caps, contain hyphens, or are known medical patterns
+    medical_correct = []
+    medical_incorrect = []
+    for sent in df['correct sentences']:
+        words = sent.split()
+        for word in words:
+            # Remove punctuation for checking
+            clean_word = ''.join(c for c in word if c.isalnum() or c == '-')
+            if (clean_word.isupper() and len(clean_word) > 2) or '-' in clean_word:
+                medical_correct.append(clean_word)
+    for sent in df['ASR-generated incorrect transcriptions']:
+        words = sent.split()
+        for word in words:
+            clean_word = ''.join(c for c in word if c.isalnum() or c == '-')
+            if (clean_word.isupper() and len(clean_word) > 2) or '-' in clean_word:
+                medical_incorrect.append(clean_word)
     
     # Error stats: simple diff count
     def count_diffs(row):
@@ -95,8 +109,8 @@ def compute_stats(df):
         'medical_terms_correct': len(set(medical_correct)),
         'medical_terms_incorrect': len(set(medical_incorrect)),
         'avg_errors_per_sentence': df['num_errors'].mean(),
-        'avg_nouns_correct_ner': df['nouns_correct_ner'].apply(len).mean(),
-        'avg_nouns_incorrect_ner': df['nouns_incorrect_ner'].apply(len).mean(),
+        # 'avg_nouns_correct_ner': df['nouns_correct_ner'].apply(len).mean(),
+        # 'avg_nouns_incorrect_ner': df['nouns_incorrect_ner'].apply(len).mean(),
         'avg_nouns_correct_pos': df['nouns_correct_pos'].apply(len).mean(),
         'avg_nouns_incorrect_pos': df['nouns_incorrect_pos'].apply(len).mean()
     }

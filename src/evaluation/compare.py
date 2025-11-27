@@ -8,7 +8,7 @@ def main():
     with open('data/processed/advanced_results.json', 'r') as f:
         advanced = json.load(f)
     
-    metrics = ['accuracy', 'bleu', 'word_accuracy', 'char_accuracy', 'noun_accuracy']
+    metrics = ['accuracy', 'bleu', 'word_accuracy', 'char_accuracy']
     
     baseline_values = [baseline[f'baseline_{m}'] for m in metrics]
     advanced_values = [advanced[f'advanced_{m}'] for m in metrics]
